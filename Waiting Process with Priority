@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Process {
+    int id;
+    int burst_time;
+    int priority;
+};
+
+void preemptivePriorityScheduling(struct Process proc[], int n) {
+    int time = 0, completed = 0;
+    int remaining_burst[n];
+    
+    for (int i = 0; i < n; i++) {
+        remaining_burst[i] = proc[i].burst_time;
+    }
+
+    while (completed < n) {
+        int idx = -1;
+        for (int j = 0; j < n; j++) {
+            if (remaining_burst[j] > 0 && (idx == -1 || proc[j].priority < proc[idx].priority)) {
+                idx = j;
+            }
+        }
+        if (idx != -1) {
+            remaining_burst[idx]--;
+            time++;
+            if (remaining_burst[idx] == 0) {
+                completed++;
+                printf("Process %d completed at time %d\n", proc[idx].id, time);
+            }
+        }
+    }
+}
+
+int main() {
+    struct Process proc[] = {{1, 10, 2}, {2, 5, 1}, {3, 8, 3}};
+    int n = sizeof(proc) / sizeof(proc[0]);
+    preemptivePriorityScheduling(proc, n);
+    return 0;
+}
